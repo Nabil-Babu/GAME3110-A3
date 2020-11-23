@@ -10,9 +10,9 @@ from datetime import datetime
 import json
 import requests
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 logging.basicConfig(filename='matchMakeServer.log', level=logging.INFO)
 
+# Lambda Function API endpoints
 allPlayersHTTPRequesrURL = 'https://2a8wbdelmg.execute-api.us-east-1.amazonaws.com/default/getAllPlayersFromDatabase'
 
 def getPlayersForMatch(sock):
@@ -35,16 +35,18 @@ def getPlayersForMatch(sock):
                         challenger = player
                 print("The challenger is: ")
                 print(challenger)
+                skillTolerance += (0.50 * challenger['loss']) * 100
+                print("Challanger Skill Tolerance: "+str(skillTolerance))
                 # Potential Opponents
-                finalOpponentList = []
+                opponentList = []
                 for player in allPlayers:
                     if abs(player['skill']-challenger['skill']) <= skillTolerance and player != challenger:
-                        finalOpponentList.append(player)
+                        opponentList.append(player)
                 print("Players available to fight: ")
-                for opponents in finalOpponentList:
+                for opponents in opponentList:
                     print(opponents)
 
-                sortedOpponentList = sorted(finalOpponentList, key=itemgetter('skill'))
+                sortedOpponentList = sorted(opponentList, key=itemgetter('skill'))
                 print("Sorted players available to fight: ")
                 for sortedOpponents in sortedOpponentList:
                     print(sortedOpponents)
